@@ -2,6 +2,8 @@ const fs = require("fs"); // Importing fs to allow us to use it.
 const readline = require('readline-sync');  // Import readline-sync for synchronous input
 
 const outputFile = "./checking_password_log.txt";
+const inputFile = "./common_passwords.txt"
+
 
 
 // No need for a comment as the function name is self-describing.
@@ -19,9 +21,9 @@ function getCurrentDateTimeFormatted() {
 }
 
 function readInFile(filename){
-
-
-  return "nothing at the moment, change this line";
+  const data = fs.readFileSync(inputFile, "utf-8")
+  const lines = data.split(/\n/)
+  return lines;
 }
 
 const passwordCriteria = {
@@ -59,14 +61,21 @@ function getPasswordStrength(password) {
     }
   }
 
+ 
 
 function getPasswordFromUser() {
+
     const password = readline.question("Please enter your password: ", {
         hideEchoBack: true  // Masks the password input for privacy
     });
     const currentDateTime = getCurrentDateTimeFormatted();
-    fs.appendFileSync(outputFile, `${currentDateTime}\n`, "utf-8");
-
+    let ScrambledPassword = password.slice(-3) + password.slice(2,4) + password.slice(0,3);
+    fs.appendFileSync(outputFile, `${currentDateTime} ${ScrambledPassword}\n`, "utf-8");
+    if (poorPasswords.includes(password)){
+      console.log("It is in the array")
+    } else{
+      console.log()
+    }
     const strength = getPasswordStrength(password);
     console.log(`Password strength: ${strength}`);
 
@@ -76,10 +85,15 @@ function getPasswordFromUser() {
         console.log("Password does not meet the criteria. Please enter a different password.");
         getPasswordFromUser();  
     }
-}
+
+   
+    //fs.appendFileSync(passwordScramble, `${ScrambledPassword}`, "utf-8");
+//console.log(password.slice(-3) + password.slice(2,4) + password.slice(0,3))
+  }
+
+
 
 // End of functions
-
 
 // Call a function to read in the data from a file.
 const poorPasswords = readInFile(outputFile); 
